@@ -12,16 +12,32 @@
 
         <section>
           <section>
-            <h3>Remember testing?</h3>
-<img src="test_output.png" class="larger">
+            <h3>What is testing?</h3>
+            <p>Checking that code does what it's supposed to</p>
           </section>
+
           <section>
-            <h3>Remember testing?</h3>
-<img src="crmtest.png" class="larger">
+            <h3>Types of testing</h3>
+            <ul>
+              <li><strong>Manual testing</strong>: a human checks that code does what it's supposed to do</li>
+              <li><strong>Automated testing</strong>: a human gets a computer to check that code does what it's supposed to do</li>
+            </ul>
           </section>
+
           <section>
-            <h3>Remember testing?</h3>
-<img src="learn_ruby.png" class="larger">
+            <h3>Example of manual vs automated</h3>
+            <p>If you have a name presence validation in your User model, how would you check that it's working?</p>
+            <p style="text-align: left">Manual</p>
+            <ul>
+              <li>Go into the Rails console and create a user without a name; OR</li>
+              <li>Fill out and submit the Sign Up form without a name</li>
+            </ul>
+            <br>
+            <p style="text-align: left">Automated</p>
+            <ul>
+              <li>Run code that creates a user without a name; OR</li>
+              <li>Run code that fills out and submits the Sign Up form without a name</li>
+            </ul>
           </section>
 
           <section>
@@ -49,21 +65,9 @@
           </section>
 
           <section>
-            <h3>Example Using Capybara</h3>
-              <pre>
-                <code class="hljs">
-When /I sign in/ do
-  within("#sign_in_form") do
-    fill_in 'Email', with: 'user@example.com'
-    fill_in 'Password', with: 'password'
-  end
-  click_button 'Sign in'
-  expect(page).to have_content 'Welcome user@example.com!'
-end
-                </code>
-              </pre>
+            <h1>Let's look at a test</h1>
+            <p>We're going to use a framework called MiniTest</p>
           </section>
-
 
           <section>
             <h3>Why test?</h3>
@@ -120,36 +124,36 @@ end
 
           <section id="colour_code_section">
             <pre id="colour_code_pre">
-              <code id="colour_code" class="hljs">### BAD
+              <code id="colour_code" class="hljs ruby">### BAD
 def test_colour_blue_has_right_colour_level
-  blue = Colour.blue
+  blue = Colour.new('#0000ff')
 
-  red_level = blue.rgb.r
-  green_level = blue.rgb.g
-  blue_level = blue.rgb.b
+  red_level = blue.rgb['r']
+  green_level = blue.rgb['g']
+  blue_level = blue.rgb['b']
 
-  assert(red_level < 0.2)
-  assert(green_level < 0.2)
-  assert(blue_level > 0.8)
+  assert_equal(red_level, 0)
+  assert_equal(green_level, 0)
+  assert_equal(blue_level, 255)
 end
 
 ### GOOD
 def test_colour_blue_has_right_red_level
-  blue = Colour.blue
-  red_level = blue.rgb.r
-  assert(red_level < 0.2)
+  blue = Colour.new('#0000ff')
+  red_level = blue.rgb['r']
+  assert_equal(red_level, 0)
 end
- 
+
 def test_colour_blue_has_right_green_level
-  blue = Colour.blue
-  green_level = blue.rgb.g
-  assert(green_level < 0.2)
+  blue = Colour.new('#0000ff')
+  green_level = blue.rgb['g']
+  assert_equal(green_level, 0)
 end
- 
+
 def test_colour_blue_has_right_blue_level
-  blue = Colour.blue
-  blue_level = blue.rgb.b
-  assert(blue_level > 0.8)
+  blue = Colour.new('#0000ff')
+  blue_level = blue.rgb['b']
+  assert_equal(blue_level, 255)
 end
 </code>
 </pre>
@@ -166,18 +170,30 @@ end
               <li>“How should I set this test up?”, “What am I testing?”, “What should the answer look like?”</li>
             </ul>
           </section>
-          <section>
-            <pre><code class="hljs ruby">
-# GOOD
-def test_average
-  # arrange
-  numbers = [1, 2, 3]
-  
-  # act
-  average = numbers.average
+          <section style="width: 1200px; overflow: visible;">
+            <pre class="" style="width: 1000px; overflow: visible; font-size: 18px;max-height: none;"><code class="hljs ruby" style="max-height: none;">
 
-  # assert
-  assert_equal(2, average)
+class Calculator
+  def new(array_of_numbers)
+    @array_of_numbers = array_of_numbers
+  end
+
+  def average
+    # code that calculates the average of the numbers in @array_of_numbers
+  end
+end
+
+class TestAverage < MiniTest::Test
+  def test_average
+    # arrange
+    my_calculator = Calculator.new([1,2,3]) # initialize an instance of the class
+
+    # act
+    average = my_calculator.average # call the method on the instance
+
+    # assert
+    assert_equal(2, average) # check the result
+  end
 end
 </code>
 </pre>
@@ -246,15 +262,12 @@ end
             </ul>
             <pre class="side-by-side-code"><code class="hljs ruby">
 # BAD
-def test_average
-  # arrange
-  numbers = [1, 2, 3]
-  
+def test_f_to_c
   # act
-  average = numbers.average
+  actual_value = f_to_c(50)
 
   # assert
-  assert_equal( [1, 2, 3].average, average)
+  assert_equal(f_to_c(50), actual_value)
 end
 </code>
 </pre>
@@ -262,19 +275,55 @@ end
             <pre class="side-by-side-code"><code class="hljs ruby">
 # GOOD
 def test_average
-  # arrange
-  numbers = [1, 2, 3]
-  
   # act
-  average = numbers.average
+  actual_value = f_to_c(50)
 
   # assert
-  assert_equal(2, average)
+  assert_equal(10, actual_value)
 end
 </code>
 </pre>
           </section>
+
+          <section style="width: 1000px">
+            <h3>Assert</h3>
+            <ul>
+              <li>make your assertions as specific as possible</li>
+            </ul>
+            <pre class="side-by-side-code"><code class="hljs ruby">
+# BAD
+def test_user_is_invalid_without_name
+  # arrange
+  user = User.new(email: "me@gmail.com")
+
+  # act
+  is_valid = user.valid?
+
+  # assert
+  assert_equal(is_valid, false)
+end
+            </code> </pre>
+
+            <pre class="side-by-side-code"><code class="hljs ruby">
+# GOOD
+def test_user_is_invalid_without_name
+  # arrange
+  user = User.new(email: "me@gmail.com")
+
+  # act
+  user.save
+
+  # assert
+  expected = ["Name can't be blank"]
+  actual = user.errors.full_messages
+  assert_equal(expected, actual)
+end
+            </code> </pre>
+          </section>
+
           <section style="width: 1200px; overflow: visible;">
+            <h4>Testing side-effects vs. return values</h4>
+
             <pre class="" style="width: 1000px; overflow: visible; font-size: 18px;max-height: none;"><code class="hljs ruby" style="max-height: none;">
   # arrange!
   def setup
@@ -288,8 +337,8 @@ end
     @contact.delete
 
     # assert
-    expected_value = []
     actual_value = Contact.all
+    expected_value = []
 
     assert_equal(expected_value, actual_value)
   end
@@ -308,11 +357,11 @@ def test_update
   @contact.update('note', 'wrote the first compiler in 1952')
 
   # assert
-  expected_value = 'wrote the first compiler in 1952'
   actual_value = @contact.note
+  expected_value = 'wrote the first compiler in 1952'
 
   assert_equal(expected_value, actual_value)
-end 
+end
 </code> </pre>
 
         </section>
